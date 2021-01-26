@@ -18,14 +18,12 @@
     margin-bottom: 4vh;
     border: 2px solid;
     border-radius: 4px;
+    border-color: white;
 }
-/* #signup-form__name{
+
+.signup-form__submit{
     border-color: white;
     box-shadow: 1.5px 1.5px lightgray;
-} */
-.signup-form__submit{
-    border-color: white !important;
-    box-shadow: 1.5px 1.5px lightgray !important;
 }
 #signup-form__name{
     margin-top: 4vh;
