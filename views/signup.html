@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/common-style.css">
+    <link rel="stylesheet" href="style/signup-style.css">
+    <title>Signup</title>
+</head>
+<body>
+    {% include "header.html" %}
+    <main id="main">
+        <form action="" id="main__signup-form">
+            <input type="text" placeholder="Full Name" id="signup-form__name" class="signup-form__submit">
+            <input type="text" placeholder="Email" id="signup-form__email" class="signup-form__submit">
+            <input type="text" placeholder="Password" id="signup-form__passwd" class="signup-form__submit">
+            <input type="text" placeholder="Verify Password" id="signup-form__passwd2" class="signup-form__submit">
+            <input type="submit" value="Join Now" id="signup-btn">
+        </form>
+        <div id="main__other-signup">
+            <a href="" id="other-signup__github" class="other-signups">
+                <i class="fab fa-github"></i>
+                <span>Continue With Github</span>
+            </a>
+            <a href="" id="other-signup__facebook" class="other-signups">
+                <i class="fab fa-facebook-square"></i>
+                <span>Continue With Facebook</span>
+            </a>
+        </div>
+    </main>
+    
+    {% include "footer.html" %}
+</body>
+</html>

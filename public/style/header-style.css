@@ -6,10 +6,14 @@
     align-items: center;
     justify-content: center;
 }
+#header__logo, #header__search{
+    position: relative;
+    left: 5vw;
+}
 #header__logo{
     color: white;
     position: relative;
-    left: -15vw;
+    left: -10vw;
     size: 100px;
 }
 #header__search{
@@ -18,13 +22,20 @@
     border: 2px solid white;
     border-radius: 4px;
 }
-#header__join{
+
+.header__redirect{
     margin-right: 2vw;
-}
-#header__join, #header__login{
     text-decoration: none;
     color: white;
     position: relative;
     left: 15vw;
     font-weight: bold;
 }
+/* #header__join, #header__login, #header__upload, #header__profile, #header__logout{
+    margin-right: 2vw;
+    text-decoration: none;
+    color: white;
+    position: relative;
+    left: 15vw;
+    font-weight: bold;
+} */

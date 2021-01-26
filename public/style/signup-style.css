@@ -1,51 +1,56 @@
 #main{
     height: 80vh;
     width: 100vw;
-    /* background-color: rgb(250, 246, 246); */
 }
-#main__login-form, #main__other-login{
+#main__signup-form, #main__other-signup{
     width: 100vw;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    /* background-color: rgb(250, 246, 246); */
 }
-#main__login-form{
+#main__signup-form{
     height: 60%;
 }
-#main__login-form>*{
+#main__signup-form>*{
     height: 7vh;
     width: 23vw;
     margin-bottom: 4vh;
     border: 2px solid;
     border-radius: 4px;
 }
-#login-form__email, #login-form__passwd{
+/* #signup-form__name{
     border-color: white;
     box-shadow: 1.5px 1.5px lightgray;
+} */
+.signup-form__submit{
+    border-color: white !important;
+    box-shadow: 1.5px 1.5px lightgray !important;
 }
-#Login-btn{
+#signup-form__name{
+    margin-top: 4vh;
+}
+#signup-btn{
     width: 24vw;
     background-color: rgb(46,136,255);
     border-color: rgb(46,136,255);
     font-size: 1.4vw;
     color: white
 }
-.other-logins{
+.other-signups{
     height: 5vh;
     width: 18vw;
 }
-#other-login__github{
+#other-signup__github{
     color: white;
     background-color: black;
 }
-#other-login__facebook{
+#other-signup__facebook{
     color: white;
     background-color: rgb(20, 89, 179);
 }
 
-.other-logins{
+.other-signups{
     padding: 2vh 3vw 1vh 3vw;
     text-align: center;
     text-decoration: none;
