@@ -1,0 +1,55 @@
+#main{
+    height: 80vh;
+    width: 100vw;
+    background-color: rgb(250, 246, 246);
+}
+#main__login-form, #main__other-login{
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(250, 246, 246);
+}
+#main__login-form{
+    height: 60%;
+}
+#main__login-form>*{
+    height: 7vh;
+    width: 23vw;
+    margin-bottom: 4vh;
+    border: 2px solid;
+    border-radius: 4px;
+}
+#login-form__email, #login-form__passwd{
+    border-color: white;
+}
+#Login-btn{
+    width: 24vw;
+    background-color: rgb(46,136,255);
+    border-color: rgb(46,136,255);
+    font-size: 1.4vw;
+    color: white
+}
+.other-logins{
+    height: 5vh;
+    width: 18vw;
+}
+#other-login__github{
+    color: white;
+    background-color: black;
+}
+#other-login__facebook{
+    color: white;
+    background-color: rgb(20, 89, 179);
+}
+
+.other-logins{
+    padding: 2vh 3vw 1vh 3vw;
+    text-align: center;
+    text-decoration: none;
+    border: 2px;
+    border-radius: 6px;
+    margin-bottom: 2vh;
+    font-size: 1.4vw;
+}

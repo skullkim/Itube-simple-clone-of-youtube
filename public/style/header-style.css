@@ -1,0 +1,30 @@
+#header{
+    height: 10vh;
+    width: 100vw;
+    background-color: rgb(241, 36, 36);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#header__logo{
+    color: white;
+    position: relative;
+    left: -15vw;
+    size: 100px;
+}
+#header__search{
+    height: 5vh;
+    width: 25vw;
+    border: 2px solid white;
+    border-radius: 4px;
+}
+#header__join{
+    margin-right: 2vw;
+}
+#header__join, #header__login{
+    text-decoration: none;
+    color: white;
+    position: relative;
+    left: 15vw;
+    font-weight: bold;
+}
