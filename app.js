@@ -5,16 +5,24 @@ const nunjucks = require('nunjucks');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const dotenv = require('dotenv');
+const {sequelize} = require('./models');
+const passport = require('passport');
+const passportConfig = require('./passport');
 const favicon = require('serve-favicon');
 
 dotenv.config();
 const app = express();
+passportConfig();
 app.set('port', process.env.PORT || 8080);
 app.set('view engine', 'html');
 nunjucks.configure('views', {
     express: app,
     watch: true,
 });
+
+sequelize.sync({force: false})
+    .then(() => console.log('success to connect DB'))
+    .catch((err) => console.error(err));
 
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -35,6 +43,9 @@ app.use(session({
     },
     name: "session-cookie",
 }));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 const index_router = require('./routes');
 const login_router = require('./routes/login');
