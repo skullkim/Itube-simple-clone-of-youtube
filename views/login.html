@@ -10,7 +10,7 @@
 <body>
     {% include "header.html" %}
     <main id="main">
-        <form action="" id="main__login-form">
+        <form action="/login" method="POST" id="main__login-form">
             <input type="text" placeholder="Email" name="email" id="login-form__email">
             <input type="password" placeholder="password" name="passwd" id="login-form__passwd">
             <input type="submit" value="login" id="Login-btn">

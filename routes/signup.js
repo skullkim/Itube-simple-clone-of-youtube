@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const bcrypt = require('bcrypt');
 const User = require('../models/users');
 
 const router = express.Router();
@@ -16,9 +17,9 @@ router.get('/', (req, res, next) => {
 router.post('/check', async (req, res, next) => {
     try{
         const {name, email, passwd1, passwd2} = req.body;
-        console.log(name, email, passwd1, passwd2);
+        //console.log(name, email, passwd1, passwd2);
         const ex_user = await User.findOne({
-            where: {name}
+            where: {email}
         })
         if(ex_user){
             res.redirect('/signup?error=you already signed up');
@@ -30,10 +31,11 @@ router.post('/check', async (req, res, next) => {
             res.redirect('/signup?error=wrong password');
         }
         else{
+            const password = await bcrypt.hash(passwd1, 12);
             await User.create({
                 name,
                 email,
-                password: passwd1,
+                password,
             });
             res.redirect('/');
         }
