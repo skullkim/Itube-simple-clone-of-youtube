@@ -32,21 +32,17 @@ router.post('/', isNotLoggedIn, (req, res, next) => {
                 return next(login_error);
             }
             //return res.redirect('/login/mainpage');
-            return res.render('index', {is_logged_in: true});
-            //res.redirect('/');
+            //return res.render('index', {is_logged_in: true});
+            return res.redirect('/');
         });
     })(req, res, next);
 });
 
-router.get('/mainpage', isLoggedIn, (req, res, next) => {
-    try{
-        res.render('index', {is_logged_in: true});
-    }
-    catch(err){
-        console.error(err);
-        next(err);
-    }
-})
+router.get('/logout', isLoggedIn, (req, res, next) => {
+    req.logOut();
+    req.session.destroy();
+    res.redirect('/');
+});
 
 router.post('/upload', (req, res, next) => {
     try{
@@ -56,6 +52,6 @@ router.post('/upload', (req, res, next) => {
         console.error(err);
         next(err);
     }
-})
+});
 
 module.exports = router;
