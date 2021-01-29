@@ -23,8 +23,10 @@ module.exports = class User extends Sequelize.Model{
             },
             github_name:{
                 type: Sequelize.STRING(50),
-                allowNull: false,
-            }
+            },
+            kakao_name:{
+                type: Sequelize.STRING(50),
+            },
         },{
             sequelize,
             timestamps: false,

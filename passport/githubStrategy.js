@@ -1,6 +1,5 @@
 const passport = require('passport');
 const githubStrategy = require('passport-github').Strategy;
-//const dotenv = require('')
 const User = require('../models/users');
 const { response } = require('express');
 require('dotenv').config();

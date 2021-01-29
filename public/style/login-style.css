@@ -40,9 +40,10 @@
     color: white;
     background-color: black;
 }
-#other-login__facebook{
-    color: white;
-    background-color: rgb(20, 89, 179);
+#other-login__kakao{
+    /* color: white; */
+    color: black;
+    background-color: rgb(252, 206, 3);
 }
 
 .other-logins{

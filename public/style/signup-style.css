@@ -43,9 +43,9 @@
     color: white;
     background-color: black;
 }
-#other-signup__facebook{
-    color: white;
-    background-color: rgb(20, 89, 179);
+#other-signup__kakao{
+    color: black;
+    background-color: rgb(252, 206, 3);
 }
 
 .other-signups{
