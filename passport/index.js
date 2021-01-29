@@ -1,5 +1,6 @@
 const passport = require('passport');
 const local = require('./localStrategy');
+const github = require('./githubStrategy');
 const User = require('../models/users');
 
 module.exports = () => {
@@ -13,4 +14,5 @@ module.exports = () => {
             .catch(err => done(err));
     });
     local();
+    github();
 }

@@ -20,6 +20,10 @@ module.exports = class User extends Sequelize.Model{
                 type: Sequelize.DATE,
                 allowNull: false,
                 defaultValue: Sequelize.NOW,
+            },
+            github_name:{
+                type: Sequelize.STRING(50),
+                allowNull: false,
             }
         },{
             sequelize,

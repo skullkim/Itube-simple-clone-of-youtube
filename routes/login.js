@@ -38,13 +38,21 @@ router.post('/', isNotLoggedIn, (req, res, next) => {
     })(req, res, next);
 });
 
+router.get('/github', passport.authenticate('github'));
+
+router.get('/github/callback', passport.authenticate('github', {
+    failureRedirect: '/login'
+}), (req, res) => {
+    res.redirect('/');
+})
+
 router.get('/logout', isLoggedIn, (req, res, next) => {
     req.logOut();
     req.session.destroy();
     res.redirect('/');
 });
 
-router.post('/upload', (req, res, next) => {
+router.get('/upload', (req, res, next) => {
     try{
         res.send('hi');
     }

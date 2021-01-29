@@ -7,6 +7,7 @@ const session = require('express-session');
 const dotenv = require('dotenv');
 const {sequelize} = require('./models');
 const passport = require('passport');
+const cors = require('cors');
 const passportConfig = require('./passport');
 const favicon = require('serve-favicon');
 
@@ -26,6 +27,7 @@ sequelize.sync({force: false})
     .catch((err) => console.error(err));
 
 app.use(morgan('dev'));
+app.use(cors({origin:`http://localhost:${app.get('port')}`}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
