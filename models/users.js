@@ -27,6 +27,10 @@ module.exports = class User extends Sequelize.Model{
             kakao_name:{
                 type: Sequelize.STRING(50),
             },
+            log_profile_img:{
+                type:Sequelize.STRING(100),
+                defaultValue: null,
+            }
         },{
             sequelize,
             timestamps: false,

@@ -3,6 +3,7 @@ const passport = require('passport');
 const {isLoggedIn, isNotLoggedIn} = require('./middlewares');
 const bcrypt = require('bcrypt');
 const path = require('path');
+const fs = require('fs');
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ router.get('/', (req, res, next) => {
         next(err);
     }
 });
-
+//local login
 router.post('/', isNotLoggedIn, (req, res, next) => {
     passport.authenticate('local', (auth_error, user, info) => {
         if(auth_error){
@@ -38,7 +39,8 @@ router.post('/', isNotLoggedIn, (req, res, next) => {
     })(req, res, next);
 });
 
-router.get('/github', passport.authenticate('github'));
+//github login
+router.get('/github', isNotLoggedIn, passport.authenticate('github'));
 
 router.get('/github/callback', passport.authenticate('github', {
     failureRedirect: '/login'
@@ -46,7 +48,8 @@ router.get('/github/callback', passport.authenticate('github', {
     res.redirect('/');
 })
 
-router.get('/kakao', passport.authenticate('kakao'));
+//kakao login
+router.get('/kakao', isNotLoggedIn, passport.authenticate('kakao'));
 
 router.get('/kakao/callback', passport.authenticate('kakao', {
     failureRedirect: '/login'
@@ -54,13 +57,7 @@ router.get('/kakao/callback', passport.authenticate('kakao', {
     res.redirect('/');
 });
 
-router.get('/logout', isLoggedIn, (req, res, next) => {
-    req.logOut();
-    req.session.destroy();
-    res.redirect('/');
-});
-
-router.get('/upload', (req, res, next) => {
+router.get('/upload', isLoggedIn, (req, res, next) => {
     try{
         res.send('hi');
     }
@@ -69,5 +66,36 @@ router.get('/upload', (req, res, next) => {
         next(err);
     }
 });
+
+router.get('/profile', isLoggedIn, (req, res, next) => {
+    try{
+        res.render('profile', {is_logged_in: true});
+    }
+    catch(err){
+        console.error(err);
+        next(err);
+    }
+});
+
+router.get('/profile-info', isLoggedIn, (req, res, next) => {
+    try{
+        console.log(req.user.log_profile_img);
+        if(req.user.log_profile_img === null){
+            res.sendFile(path.join(__dirname, '../public/default-profile.png'));
+        }
+    }
+    catch(err){
+        console.error(err);
+        next(err);
+    }
+});
+
+router.get('/logout', isLoggedIn, (req, res, next) => {
+    req.logOut();
+    req.session.destroy();
+    res.redirect('/');
+});
+
+
 
 module.exports = router;
