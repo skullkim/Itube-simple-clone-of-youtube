@@ -5,9 +5,17 @@
     align-items: center;
 }
 
+#main__profile{
+    margin-bottom: 7vh;
+}
+
+#profile__name{
+    text-align: center;
+}
+
 #profile__img{
-    height: 10vh;
-    width: 6vw;
+    height: 14vh;
+    width: 7vw;
     border: 2px solid white;
     border-radius: 50%;
     margin-top: 3vh;

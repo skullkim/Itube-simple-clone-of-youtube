@@ -23,6 +23,7 @@ module.exports = () => passport.use(new githubStrategy({
                     email,
                     password: '',
                     github_name: profile.username,
+                    login_as: 'github',
                 });
                 done(null, new_user);
             }

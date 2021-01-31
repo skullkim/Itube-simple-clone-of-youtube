@@ -67,6 +67,7 @@ router.get('/upload', isLoggedIn, (req, res, next) => {
     }
 });
 
+//profile
 router.get('/profile', isLoggedIn, (req, res, next) => {
     try{
         res.render('profile', {is_logged_in: true});
@@ -77,7 +78,7 @@ router.get('/profile', isLoggedIn, (req, res, next) => {
     }
 });
 
-router.get('/profile-info', isLoggedIn, (req, res, next) => {
+router.get('/profile-img', isLoggedIn, (req, res, next) => {
     try{
         console.log(req.user.log_profile_img);
         if(req.user.log_profile_img === null){
@@ -89,6 +90,30 @@ router.get('/profile-info', isLoggedIn, (req, res, next) => {
         next(err);
     }
 });
+
+router.get('/profile-name', isLoggedIn, (req, res, next) => {
+    try{
+        const name = req.user.name;
+        const response = {
+            name,
+        };
+        res.send(JSON.stringify(response));
+    }
+    catch(err){
+        console.error(err);
+        next(err);
+    }
+})
+
+router.get('/edit-profile', isLoggedIn, (req, res, next) => {
+    try{
+        res.render('edit-profile', {is_logged_in: true});
+    }
+    catch(err){
+        console.error(err);
+        next(err);
+    }
+})
 
 router.get('/logout', isLoggedIn, (req, res, next) => {
     req.logOut();

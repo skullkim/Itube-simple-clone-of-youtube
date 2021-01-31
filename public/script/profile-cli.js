@@ -1,6 +1,15 @@
-// window.onload = () => {
-//     const profile_img = $('#main__profile-img');
-//     $.get('/login/profile-info', (img) => {
-//         console.log(img);
-//     })
-// }
+window.onload = () => {
+    axios({
+        method: 'get',
+        url: '/login/profile-name',
+        data: {}
+    })
+        .then(res => {
+            const {name} = res.data;
+            console.log(name);
+            $('#profile__name').text(name);
+        })
+        .catch(err => {
+            console.error(err);
+        })
+}

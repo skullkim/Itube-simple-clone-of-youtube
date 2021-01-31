@@ -36,6 +36,7 @@ router.post('/check', async (req, res, next) => {
                 name,
                 email,
                 password,
+                login_as: 'local',
             });
             res.redirect('/');
         }

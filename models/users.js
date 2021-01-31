@@ -30,6 +30,9 @@ module.exports = class User extends Sequelize.Model{
             log_profile_img:{
                 type:Sequelize.STRING(100),
                 defaultValue: null,
+            },
+            login_as:{
+                type: Sequelize.STRING(20),
             }
         },{
             sequelize,
