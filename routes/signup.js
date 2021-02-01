@@ -17,7 +17,6 @@ router.get('/', (req, res, next) => {
 router.post('/check', async (req, res, next) => {
     try{
         const {name, email, passwd1, passwd2} = req.body;
-        //console.log(name, email, passwd1, passwd2);
         const ex_user = await User.findOne({
             where: {email}
         })

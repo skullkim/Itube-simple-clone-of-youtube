@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const User = require('./users');
+const Token = require('./token');
 
 const env = process.env.NOVE_DEV || 'development';
 const config = require('../config/config')[env];
@@ -11,7 +12,9 @@ const sequelize = new Sequelize(
 
 db.sequelize = sequelize;
 db.User = User;
+db.Token = Token;
 
 User.init(sequelize);
+Token.init(sequelize);
 
 module.exports = db;

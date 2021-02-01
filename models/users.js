@@ -45,5 +45,7 @@ module.exports = class User extends Sequelize.Model{
             collate: 'utf8_general_ci',
         })
     }
-    static associatie(db){}
+    static associatie(db){
+        db.User.hasMany(db.Token, {foreginKey: 'id', sourceKey: 'id'});
+    }
 }
