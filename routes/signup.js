@@ -40,7 +40,6 @@ router.post('/check', async (req, res, next) => {
             });
             res.redirect('/');
         }
-        //res.send('hi');
     }
     catch(err){
         console.error(err);

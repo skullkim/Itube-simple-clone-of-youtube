@@ -12,47 +12,37 @@ module.exports = () => {
         callbackURL: 'http://localhost:8080/login/kakao/callback'
     }, async(accessToken, refreshToken, profile, done) => {
         try{
-            // console.log('kakao', profile);
-            //console.log(1111111);
-            //console.log('kakao', profile._json.properties.profile_image)
             const ex_user = await User.findOne({
                 where: {kakao_name: profile.username}
             });
             const path = profile._json.properties.profile_image;
             console.log(path);
+            const profile_img = `kakao-profile-${Date.now()}.jpg`;
             axios.get(path, {
-                headers: {Authorization: `Bearer ${accessToken}`}
+                headers: {Authorization: `Bearer ${accessToken}`},
+                responseType: 'stream',
             })
-                .then((response) => {
-                    //console.log('res', response);
-                    const data = response.data;
-                    const bmap = new Buffer(data, 'base64');
-                    fs.writeFile('kakao.jpg', bmap, (err) => {
-                        if(err) console.error(err);
-                        console.log('s');
-                    })
-                    const st = multer.diskStorage({
-                        storage: destination(req, )
-                    })
+                .then(async (response) => {
+                   response.data.pipe(fs.createWriteStream(`./upload/${profile_img}`));
                 })
                 .catch(err => {
                     console.error(err);
                 })
-            // fs.readFile(path, (err, data) => {
-            //     if(err) console.error(err);
-            //     console.log(data);
-            // })
             if(ex_user){
+                await User.update(
+                    {login_as: 'kakao', kakao_name: profile.username, log_profile_img: `/upload/${profile_img}`},
+                    {where: {kakao_name: profile.username}}
+                );
                 done(null, ex_user);
             }
             else{
-                // fs.readFile()
                 const email = profile._json.kakao_account.email || '';
                 const new_user = await User.create({
                     name: profile.username,
                     email,
                     password: '',
                     kakao_name: profile.username,
+                    log_profile_img: `/upload/${profile_img}` ,
                     login_as: 'kakao',
                 });
                 done(null, new_user);

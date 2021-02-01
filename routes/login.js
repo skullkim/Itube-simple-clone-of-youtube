@@ -4,6 +4,7 @@ const {isLoggedIn, isNotLoggedIn} = require('./middlewares');
 const bcrypt = require('bcrypt');
 const path = require('path');
 const fs = require('fs');
+const User = require('../models/users');
 
 const router = express.Router();
 
@@ -32,8 +33,6 @@ router.post('/', isNotLoggedIn, (req, res, next) => {
                 console.error(login_error);
                 return next(login_error);
             }
-            //return res.redirect('/login/mainpage');
-            //return res.render('index', {is_logged_in: true});
             return res.redirect('/');
         });
     })(req, res, next);
@@ -80,10 +79,20 @@ router.get('/profile', isLoggedIn, (req, res, next) => {
 
 router.get('/profile-img', isLoggedIn, (req, res, next) => {
     try{
-        console.log(req.user.log_profile_img);
-        if(req.user.log_profile_img === null){
-            res.sendFile(path.join(__dirname, '../public/default-profile.png'));
+        const user = req.user;
+        if(user.login_as === 'local'){
+            if(user.log_profile_img === null){
+                res.sendFile(path.join(__dirname, '../public/default-profile.png'));
+            }
         }
+        else if(user.login_as === 'kakao'){
+            console.log(user.log_profile_img);
+            res.sendFile(path.join(__dirname, `../${user.log_profile_img}`));
+        }
+        else if(user.login_as === 'github'){
+            res.sendFile(path.join(__dirname, `../${user.log_profile_img}`));
+        }
+        
     }
     catch(err){
         console.error(err);
@@ -93,10 +102,17 @@ router.get('/profile-img', isLoggedIn, (req, res, next) => {
 
 router.get('/profile-name', isLoggedIn, (req, res, next) => {
     try{
-        const name = req.user.name;
-        const response = {
-            name,
-        };
+        const user = req.user;
+        const response = {name: null};
+        if(user.login_as === 'local'){
+            response.name = user.name;
+        }
+        else if(user.login_as === 'kakao'){
+            response.name = user.kakao_name
+        }
+        else if(user.login_as === 'github'){
+            response.name = user.github_name
+        }
         res.send(JSON.stringify(response));
     }
     catch(err){
