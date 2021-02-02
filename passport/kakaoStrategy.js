@@ -28,7 +28,7 @@ module.exports = () => {
             })
                 .then(async (response) => {
                     //save profile image
-                   response.data.pipe(fs.createWriteStream(`./upload/${profile_img}`));
+                   response.data.pipe(fs.createWriteStream(`./upload/profile/kakao/${profile_img}`));
                 })
                 .catch(err => {
                     console.error(err);
@@ -37,7 +37,7 @@ module.exports = () => {
             if(ex_user){
                 //update name, profile image
                 await User.update(
-                    {login_as: 'kakao', kakao_name: profile.username, log_profile_img: `/upload/${profile_img}`},
+                    {login_as: 'kakao', kakao_name: profile.username, log_profile_img: `/upload/profile/kakao/${profile_img}`},
                     {where: {kakao_name: profile.username}}
                 );
                 //save token
@@ -56,7 +56,7 @@ module.exports = () => {
                     email,
                     password: '',
                     kakao_name: profile.username,
-                    log_profile_img: `/upload/${profile_img}` ,
+                    log_profile_img: `/upload/profile/kakao/${profile_img}` ,
                     login_as: 'kakao',
                 });
                 //console.log(new_user.id);

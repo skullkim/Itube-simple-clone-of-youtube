@@ -168,9 +168,6 @@ router.get('/logout', isLoggedIn, async(req, res, next) => {
                 next(err);
             })
     }
-    // else if(login_as === 'github'){
-    //     axios.delete('/au')
-    // }
     await Token.destroy({
         where: {user_id: id}
     });

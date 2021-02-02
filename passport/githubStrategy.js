@@ -25,7 +25,7 @@ module.exports = () => passport.use(new githubStrategy({
             })
                 .then((response) => {
                     //save profile image
-                    response.data.pipe(fs.createWriteStream(`./upload/${profile_img}`));
+                    response.data.pipe(fs.createWriteStream(`./upload/profile/github/${profile_img}`));
                 })
                 .catch(err => {
                     console.error(err);
@@ -34,12 +34,21 @@ module.exports = () => passport.use(new githubStrategy({
             if(ex_user){
                 //update name, profile image
                 await User.update(
-                    {login_as: 'github', github_name: profile.username, log_profile_img: `/upload/${profile_img}`},
+                    {
+                        login_as: 'github', 
+                        github_name: profile.username,
+                        log_profile_img: `/upload/profile/github/${profile_img}`
+                    },
                     {where: {github_name: profile.username}}
                 );
                 //save token
-                await Token.update(
-                    {user_id: ex_user.id, git_auth: aceessToken, git_refresh: refreshToken},
+                await Token.create(
+                    {
+                        user_id: ex_user.id, 
+                        git_auth: aceessToken, 
+                        git_refresh: refreshToken,
+                        git_id: profile._json.id,
+                    },
                     {where: {user_id: ex_user.id}},
                 );
                 done(null, ex_user);
@@ -53,7 +62,7 @@ module.exports = () => passport.use(new githubStrategy({
                     email,
                     password: '',
                     github_name: profile.username,
-                    log_profile_img: `'/upload/${profile_img}`,
+                    log_profile_img: `'/upload/profile/github/${profile_img}`,
                     login_as: 'github',
                 });
                 //save token
@@ -61,6 +70,7 @@ module.exports = () => passport.use(new githubStrategy({
                     user_id: new_user.id,
                     git_auth: aceessToken,
                     git_refresh: refreshToken,
+                    git_id: profile._json.id,
                 });
                 done(null, new_user);
             }

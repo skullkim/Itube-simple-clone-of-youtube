@@ -18,7 +18,10 @@ module.exports = class Token extends Sequelize.Model{
             },
             git_refresh:{
                 type: Sequelize.STRING(1000),
-            }
+            },
+            git_id:{
+                type: Sequelize.INTEGER,
+            },
         },{
             sequelize,
             timestamps: false,
