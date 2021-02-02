@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt');
 const path = require('path');
 const fs = require('fs');
 const User = require('../models/users');
+const Token = require('../models/token');
+const axios = require('axios');
 
 const router = express.Router();
 
@@ -131,10 +133,51 @@ router.get('/edit-profile', isLoggedIn, (req, res, next) => {
     }
 })
 
-router.get('/logout', isLoggedIn, (req, res, next) => {
+router.get('/logout', isLoggedIn, async(req, res, next) => {
+    //console.log(req.user);
+    const {id, log_profile_img, login_as} = req.user;
+    console.log(id, log_profile_img, login_as);
+    if(login_as === 'kakao' || login_as === 'github'){
+        await fs.unlink(`.${log_profile_img}`, (err) => {
+            if(err){
+                console.error(err);
+                next(err);
+            }
+            console.log('deleted');
+        })
+    }
+    const token = await Token.findOne({
+        where: {user_id: id}
+    });
+    
+    if(login_as === 'kakao'){
+        console.log('kakao auth', token.kakao_auth);
+        axios({
+            method: 'post',
+            url: 'https://kapi.kakao.com/v1/user/logout',
+            headers: {
+                Host: 'kapi.kakao.com',
+                Authorization: `Bearer ${token.kakao_auth}`,
+            }
+        })
+            .then(response => {
+                console.log(`kakao logout success ${response}`)
+            })
+            .catch(err => {
+                console.error(err);
+                next(err);
+            })
+    }
+    // else if(login_as === 'github'){
+    //     axios.delete('/au')
+    // }
+    await Token.destroy({
+        where: {user_id: id}
+    });
     req.logOut();
     req.session.destroy();
     res.redirect('/');
+
 });
 
 

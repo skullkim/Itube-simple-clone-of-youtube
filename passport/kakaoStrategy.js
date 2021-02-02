@@ -13,6 +13,7 @@ module.exports = () => {
         callbackURL: 'http://localhost:8080/login/kakao/callback'
     }, async(accessToken, refreshToken, profile, done) => {
         try{
+            //console.log('leng', accessToken.length);
             //find user
             const ex_user = await User.findOne({
                 where: {kakao_name: profile.username}
@@ -40,7 +41,7 @@ module.exports = () => {
                     {where: {kakao_name: profile.username}}
                 );
                 //save token
-                await Token.update(
+                await Token.create(
                     {user_id: ex_user.id, kakao_auth: accessToken, kakao_refresh: refreshToken},
                     {where: {user_id: ex_user.id}}
                 )

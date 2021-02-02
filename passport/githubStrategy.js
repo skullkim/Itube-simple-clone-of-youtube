@@ -12,7 +12,7 @@ module.exports = () => passport.use(new githubStrategy({
         callbackURL: "http://localhost:8080/login/github/callback"
     }, async (aceessToken, refreshToken, profile, done) => {
         try{
-            console.log('github', profile.photos[0].value);
+            console.log('github', profile);
             //find user
             const ex_user = await User.findOne({
               where: {github_name: profile.username}  

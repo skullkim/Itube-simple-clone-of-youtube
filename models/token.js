@@ -8,7 +8,7 @@ module.exports = class Token extends Sequelize.Model{
                 allowNull: false,
             },
             kakao_auth:{
-                type: Sequelize.STRING(1000),
+                type: Sequelize.STRING(10000),
             },
             kakao_refresh:{
                 type: Sequelize.STRING(1000),
