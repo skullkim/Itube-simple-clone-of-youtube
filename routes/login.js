@@ -134,26 +134,44 @@ router.post('/user-info-adjustment', isLoggedIn, uploadImage.single('profile_img
             res.redirect('/login/profile?error=you can only change profile when you login locally');
         }
         else{
+            //console.log(req.body);
+            const {name, email} = req.body;
+            console.log(name, email);
             const {id, log_profile_img} = req.user;
-            const {path} = req.file;
-            console.log(path, '   id', id);
-            await User.update(
-                {log_profile_img: `/${path}`},
-                {where: {id}}
-            )
-            fs.unlink(`.${log_profile_img}`, (err) => {
-                if(err){
-                    console.error(err);
-                    next(err);
+            if(req.file){
+                const {path} = req.file;
+                console.log(path, '   id', id);
+                await User.update(
+                    {log_profile_img: `/${path}`},
+                    {where: {id}}
+                )
+                fs.unlink(`.${log_profile_img}`, (err) => {
+                    if(err){
+                        console.error(err);
+                        next(err);
+                    }
+                    console.log('local profile image deleted');
+                })
+            }
+            if(name){
+                await User.update(
+                    {name},
+                    {where: {id}}
+                )
+            }
+            if(email){
+                if(!email.includes('@')){
+                    res.redirect('/login/profile-adjustment?error=please input valid email address');
                 }
-                console.log('local profile image deleted');
-            })
+                await User.update(
+                    {email},
+                    {where: {id}}
+                )
+            }
             res.redirect('/login/profile');
         }
         console.log('user', req.user);
         console.log('file', req.file);
-        
-        //res.end();
     }
     catch(err){
         console.error(err);
