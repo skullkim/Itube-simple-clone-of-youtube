@@ -10,18 +10,21 @@
 <body>
     {% include "header.html" %}
     <main id="main">
-        <form action="" id="main__form">
+        <form action="/login/user-info-adjustment" method="POST" enctype="multipart/form-data" id="main__form">
+            <!-- for using PUT method -->
+            <!-- <input type="hidden" name="_method" value="put"> -->
             <div id="form__img">
                 <!-- <span>Avatar</span> -->
                 <label for="img__chose" id="img__info">Avatar</label>
-                <input type="file" value="Avatar" id="img__chose">
+                <input type="file" value="Avatar" name="profile_img" id="img__chose">
             </div>
-            <input type="text" placeholder="name" id="form__name">
-            <input type="text" placeholder="email" id="form__email">
+            <input type="text" placeholder="name" name="name" id="form__name">
+            <input type="text" placeholder="email" name="email" id="form__email">
             <input type="submit" id="form__submit-btn">
         </form>
         
     </main>
     {% include "footer.html" %}
+    <script src="/script/edit-profile-cli.js"></script>
 </body>
 </html>

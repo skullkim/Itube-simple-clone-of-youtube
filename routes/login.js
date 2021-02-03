@@ -1,12 +1,14 @@
 const express = require('express');
 const passport = require('passport');
-const {isLoggedIn, isNotLoggedIn} = require('./middlewares');
+const multer = require('multer');
+const {isLoggedIn, isNotLoggedIn, uploadImage} = require('./middlewares');
 const bcrypt = require('bcrypt');
 const path = require('path');
 const fs = require('fs');
 const User = require('../models/users');
 const Token = require('../models/token');
 const axios = require('axios');
+const { log } = require('util');
 
 const router = express.Router();
 
@@ -82,19 +84,12 @@ router.get('/profile', isLoggedIn, (req, res, next) => {
 router.get('/profile-img', isLoggedIn, (req, res, next) => {
     try{
         const user = req.user;
-        if(user.login_as === 'local'){
-            if(user.log_profile_img === null){
-                res.sendFile(path.join(__dirname, '../public/default-profile.png'));
-            }
+        if(user.login_as === 'local' && user.log_profile_img === null){
+            res.sendFile(path.join(__dirname, '../public/default-profile.png'));
         }
-        else if(user.login_as === 'kakao'){
-            console.log(user.log_profile_img);
+        else{
             res.sendFile(path.join(__dirname, `../${user.log_profile_img}`));
         }
-        else if(user.login_as === 'github'){
-            res.sendFile(path.join(__dirname, `../${user.log_profile_img}`));
-        }
-        
     }
     catch(err){
         console.error(err);
@@ -123,9 +118,42 @@ router.get('/profile-name', isLoggedIn, (req, res, next) => {
     }
 })
 
-router.get('/edit-profile', isLoggedIn, (req, res, next) => {
+router.get('/profile-adjustment', isLoggedIn, (req, res, next) => {
     try{
         res.render('edit-profile', {is_logged_in: true});
+    }
+    catch(err){
+        console.error(err);
+        next(err);
+    }
+})
+
+router.post('/user-info-adjustment', isLoggedIn, uploadImage.single('profile_img'), async (req, res, next) => {
+    try{
+        if(req.user.login_as !== 'local'){
+            res.redirect('/login/profile?error=you can only change profile when you login locally');
+        }
+        else{
+            const {id, log_profile_img} = req.user;
+            const {path} = req.file;
+            console.log(path, '   id', id);
+            await User.update(
+                {log_profile_img: `/${path}`},
+                {where: {id}}
+            )
+            fs.unlink(`.${log_profile_img}`, (err) => {
+                if(err){
+                    console.error(err);
+                    next(err);
+                }
+                console.log('local profile image deleted');
+            })
+            res.redirect('/login/profile');
+        }
+        console.log('user', req.user);
+        console.log('file', req.file);
+        
+        //res.end();
     }
     catch(err){
         console.error(err);
@@ -136,7 +164,7 @@ router.get('/edit-profile', isLoggedIn, (req, res, next) => {
 router.get('/logout', isLoggedIn, async(req, res, next) => {
     //console.log(req.user);
     const {id, log_profile_img, login_as} = req.user;
-    console.log(id, log_profile_img, login_as);
+    //console.log(id, log_profile_img, login_as);
     if(login_as === 'kakao' || login_as === 'github'){
         await fs.unlink(`.${log_profile_img}`, (err) => {
             if(err){
@@ -151,7 +179,7 @@ router.get('/logout', isLoggedIn, async(req, res, next) => {
     });
     
     if(login_as === 'kakao'){
-        console.log('kakao auth', token.kakao_auth);
+        //console.log('kakao auth', token.kakao_auth);
         axios({
             method: 'post',
             url: 'https://kapi.kakao.com/v1/user/logout',
