@@ -116,7 +116,7 @@ router.get('/profile-name', isLoggedIn, (req, res, next) => {
         console.error(err);
         next(err);
     }
-})
+});
 
 router.get('/profile-adjustment', isLoggedIn, (req, res, next) => {
     try{
@@ -126,7 +126,7 @@ router.get('/profile-adjustment', isLoggedIn, (req, res, next) => {
         console.error(err);
         next(err);
     }
-})
+});
 
 router.post('/user-info-adjustment', isLoggedIn, uploadImage.single('profile_img'), async (req, res, next) => {
     try{
@@ -177,7 +177,19 @@ router.post('/user-info-adjustment', isLoggedIn, uploadImage.single('profile_img
         console.error(err);
         next(err);
     }
-})
+});
+
+router.get('/passwd-adjustment', isLoggedIn, (req, res, next) => {
+    try{
+        res.render('change-password', {is_logged_in: true});
+    }
+    catch(err){
+        console.error(err);
+        next(err);
+    }
+});
+
+
 
 router.get('/logout', isLoggedIn, async(req, res, next) => {
     //console.log(req.user);
