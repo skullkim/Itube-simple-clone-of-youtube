@@ -189,7 +189,32 @@ router.get('/passwd-adjustment', isLoggedIn, (req, res, next) => {
     }
 });
 
-
+router.post('/passwd-verification', isLoggedIn, async (req, res, next) => {
+    try{
+        const {curr_passwd, passwd1, passwd2} = req.body;
+        const {id, password} = req.user;
+        //console.log(curr_passwd, passwd1, passwd2);
+        //const bc_curr_passwd = await bcrypt.hash(curr_passwd, 12);
+        if(!await bcrypt.compare(curr_passwd, password)){
+            res.redirect('/login/passwd-adjustment?error=current password is not correct');
+        }
+        else if(passwd1 !== passwd2){
+            res.redirect('/login/passwd-adjustment?error=wrong password')
+        }
+        else{
+            const new_passwd = await bcrypt.hash(passwd1, 12);
+            await User.update(
+                {password: new_passwd},
+                {where: {id}},
+            );
+            res.redirect('/login/passwd-adjustment?success=change password successful');
+        }
+    }
+    catch(err){
+        console.error(err);
+        next(err);
+    }
+})
 
 router.get('/logout', isLoggedIn, async(req, res, next) => {
     //console.log(req.user);
