@@ -9,6 +9,10 @@ module.exports = class Video extends Sequelize.Model{
             },
             video:{
                 type: Sequelize.STRING(1000),
+                allowNull: false,
+            },
+            video_name:{
+                type: Sequelize.STRING(1000),
             }
         },{
             sequelize,

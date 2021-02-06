@@ -4,4 +4,13 @@ window.onload = () => {
     if(error_param){
         alert(error_param);
     }
+
+    axios.get('/video/uploaded-video')
+        .then((res) => {
+            console.log(res);
+        })
+        .catch((err) => {
+            console.error(err);
+        })
+
 }

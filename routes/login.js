@@ -80,10 +80,12 @@ router.post('/upload-video', isLoggedIn, uploadVideo.single('video'), async (req
         if(req.file){
             const {path} = req.file;
             const {id} = req.user;
+            const {video_name} = req.body;
             console.log(path);
             await Video.create({
                 video_user: id,
                 video: path, 
+                video_name
             });
             res.redirect('/login/upload?success=Upload success');
         }
@@ -95,7 +97,7 @@ router.post('/upload-video', isLoggedIn, uploadVideo.single('video'), async (req
         console.error(err);
         next(err);
     }
-})
+});
 
 //profile
 router.get('/profile', isLoggedIn, (req, res, next) => {
@@ -161,7 +163,6 @@ router.post('/user-info-adjustment', isLoggedIn, uploadImage.single('profile_img
             res.redirect('/login/profile?error=you can only change profile when you login locally');
         }
         else{
-            //console.log(req.body);
             const {name, email} = req.body;
             console.log(name, email);
             const {id, log_profile_img} = req.user;

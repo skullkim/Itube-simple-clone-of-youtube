@@ -52,6 +52,7 @@ app.use(passport.initialize());
 const index_router = require('./routes');
 const login_router = require('./routes/login');
 const signup_router = require('./routes/signup');
+const video_router = require('./routes/display-videos');
 app.use(passport.session());
 
 
@@ -60,6 +61,7 @@ app.use(path.join(__dirname, '/script'), express.static('public'));
 app.use('/', index_router);
 app.use('/login', login_router);
 app.use('/signup', signup_router);
+app.use('/video', video_router);
 
 app.use((req, res, next) => {
     const error = new Error(`${res.method} ${req.url} router doesn't exist`);
