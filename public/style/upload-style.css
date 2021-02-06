@@ -1,0 +1,41 @@
+#main, #main__form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#main__form>*, #main__take-video{
+    height: 5vh;
+    width: 30vw;
+    background-color: white;
+    border: 2px solid white;
+    border-radius: 4px;
+    box-shadow: 1.5px 1.5px lightgray;
+}
+
+#main__form>*{
+    margin-bottom: 4vh;
+}
+
+#form__label{
+    font-size: 2vh;
+}
+
+#form__video{
+    margin-top: 4vh;
+}
+
+#form__submit-btn, #main__take-video{
+    background-color: rgb(46,136,255);
+    color: white;
+    border: 2px solid rgb(46,136,255);
+}
+
+#main__take-video{
+    height: 2vh;
+    padding: 1vh 0vw;
+    text-decoration: none;
+    text-align: center;
+}
+

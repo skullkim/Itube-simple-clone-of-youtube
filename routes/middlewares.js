@@ -26,3 +26,15 @@ exports.uploadImage = multer({
         },
     }),
 });
+
+exports.uploadVideo = multer({
+    storage: multer.diskStorage({
+        destination(req, file, done){
+            done(null, './upload/video');
+        },
+        filename(req, file, done){
+            const ext = path.extname(file.originalname);
+            done(null, path.basename(file.originalname, ext) + Date.now() + ext);
+        },
+    }), 
+});

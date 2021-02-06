@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style/common-style.css">
+    <link rel="stylesheet" href="/style/upload-style.css">
+    <title>Upload</title>
+</head>
+<body>
+   {% include "header.html" %} 
+   <main id="main">
+        <form action="/login/upload-video" method="POST" enctype="multipart/form-data" id="main__form">
+            <div id="form__video">
+                <label for="form__video" id="form__label">Select video</label>
+                <input type="file" value="Select video" name="video" id="form__video-btn">
+            </div>
+            <input type="submit" value="Upload video" id="form__submit-btn">
+        </form>
+        <a href="/upload/take-video" id="main__take-video">Take new video</a>
+   </main>
+   {% include "footer.html" %}
+   <script src="/script/upload-script.js"></script>
+</body>
+</html>

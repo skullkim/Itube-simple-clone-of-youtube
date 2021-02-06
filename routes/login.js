@@ -1,12 +1,16 @@
 const express = require('express');
 const passport = require('passport');
 const multer = require('multer');
-const {isLoggedIn, isNotLoggedIn, uploadImage} = require('./middlewares');
+const {isLoggedIn, 
+        isNotLoggedIn,
+        uploadImage, 
+        uploadVideo} = require('./middlewares');
 const bcrypt = require('bcrypt');
 const path = require('path');
 const fs = require('fs');
 const User = require('../models/users');
 const Token = require('../models/token');
+const Video = require('../models/videos');
 const axios = require('axios');
 const { log } = require('util');
 
@@ -60,15 +64,38 @@ router.get('/kakao/callback', passport.authenticate('kakao', {
     res.redirect('/');
 });
 
+//upload
 router.get('/upload', isLoggedIn, (req, res, next) => {
     try{
-        res.send('hi');
+        res.render('upload', {is_logged_in: true});
     }
     catch(err){
         console.error(err);
         next(err);
     }
 });
+
+router.post('/upload-video', isLoggedIn, uploadVideo.single('video'), async (req, res, next) => {
+    try{
+        if(req.file){
+            const {path} = req.file;
+            const {id} = req.user;
+            console.log(path);
+            await Video.create({
+                video_user: id,
+                video: path, 
+            });
+            res.redirect('/login/upload?success=Upload success');
+        }
+        else{
+            res.redirect('/login/upload?error=Please choose video before uploading video');
+        }
+    }
+    catch(err){
+        console.error(err);
+        next(err);
+    }
+})
 
 //profile
 router.get('/profile', isLoggedIn, (req, res, next) => {
