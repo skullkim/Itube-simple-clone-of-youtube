@@ -14,7 +14,7 @@ module.exports = class Video extends Sequelize.Model{
             video_name:{
                 type: Sequelize.STRING(1000),
             },
-            sumail:{
+            sumnail:{
                 type: Sequelize.STRING(1000),
             },
         },{

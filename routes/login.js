@@ -92,18 +92,20 @@ const video_info = uploadVideo.fields([
 
 router.post('/upload-video', isLoggedIn, video_info, async (req, res, next) => {
     try{
-        console.log(req.files.video);
+        //console.log('video', req.files);
         const {video, sumnail} = req.files;
+        console.log('video', video[0].path)
         if(video){
             //const {path} = req.file;
+            console.log(video);
             const {id} = req.user;
             const {video_name} = req.body;
             console.log(path);
             await Video.create({
                 video_user: id,
-                video: video.path, 
+                video: video[0].path, 
                 video_name,
-                sumnail: sumnail.path,
+                sumnail: sumnail[0].path,
             });
             req.flash('message', 'Upload success');
             res.redirect('/login/upload');
