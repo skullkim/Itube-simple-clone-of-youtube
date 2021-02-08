@@ -2,7 +2,7 @@
     height: 80vh;
     width: 100vw;
 }
-#main__signup-form, #main__other-signup{
+#main__signup-form, #main__other-signup, #main__message{
     width: 100vw;
     display: flex;
     flex-direction: column;
@@ -34,6 +34,9 @@
     border-color: rgb(46,136,255);
     font-size: 1.4vw;
     color: white
+}
+#main__message{
+    color: red;
 }
 .other-signups{
     height: 5vh;

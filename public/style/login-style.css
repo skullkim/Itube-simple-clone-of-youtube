@@ -3,7 +3,7 @@
     width: 100vw;
     /* background-color: rgb(250, 246, 246); */
 }
-#main__login-form, #main__other-login{
+#main__login-form, #main__other-login, #main__error-message{
     width: 100vw;
     display: flex;
     flex-direction: column;
@@ -12,7 +12,7 @@
     /* background-color: rgb(250, 246, 246); */
 }
 #main__login-form{
-    height: 60%;
+    height: 50%;
 }
 #main__login-form>*{
     height: 7vh;
@@ -30,7 +30,12 @@
     background-color: rgb(46,136,255);
     border-color: rgb(46,136,255);
     font-size: 1.4vw;
-    color: white
+    color: white;
+    margin-bottom: 0;
+}
+#main__error-message{
+    color: red;
+    border: 0;
 }
 .other-logins{
     height: 5vh;
@@ -44,6 +49,10 @@
     /* color: white; */
     color: black;
     background-color: rgb(252, 206, 3);
+}
+
+#main__other-login{
+    color: red;
 }
 
 .other-logins{

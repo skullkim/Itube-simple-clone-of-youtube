@@ -9,6 +9,7 @@ module.exports = () => {
     passport.use(new local_strategy({
         usernameField: 'email',
         passwordField: 'passwd',
+        // passReqToCallback: true,
     }, async(email, passwd, done) => {
         try{
             const ex_user = await User.findOne({
@@ -24,6 +25,7 @@ module.exports = () => {
             }
             else{
                 done(null, false, {message: 'Did not signup yet'});
+                //done(null, false, req.flash('error', 'Did not signup yet'));
             }
         }
         catch(err){

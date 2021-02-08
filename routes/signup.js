@@ -6,7 +6,7 @@ const User = require('../models/users');
 const router = express.Router();
 router.get('/', (req, res, next) => {
     try{
-        res.render('signup');
+        res.render('signup', {message: req.flash('message')});
     }
     catch(err){
         console.error(err);
@@ -21,13 +21,16 @@ router.post('/check', async (req, res, next) => {
             where: {email}
         })
         if(ex_user){
-            res.redirect('/signup?error=you already signed up');
+            req.flash('message', 'you already signed up');
+            res.redirect('/signup');
         }
         else if(!email.includes('@')){
-            res.redirect('/signup?error=input proper email address');
+            req.flash('message', 'input proper email address');
+            res.redirect('/signup');
         }
         else if(passwd1 !== passwd2){
-            res.redirect('/signup?error=wrong password');
+            req.flash('message', 'wrong password');
+            res.redirect('/signup');
         }
         else{
             const password = await bcrypt.hash(passwd1, 12);

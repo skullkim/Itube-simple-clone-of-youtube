@@ -12,13 +12,18 @@
    <main id="main">
         <form action="/login/upload-video" method="POST" enctype="multipart/form-data" id="main__form">
             <div id="form__video">
-                <label for="form__video" id="form__label">Select video</label>
-                <input type="file" value="Select video" name="video" id="form__video-btn">
+                <label for="video__video-btn" id="video__label">Select video</label>
+                <input type="file" value="Select video" name="video" id="video__video-btn">
+            </div>
+            <div id="form__sumnail">
+                <label for="sumnail__sumnail-btn" id="sumnail__label">Select sumnail</label>
+                <input type="file" value="Select sumnail" name="sumnail" id="sumnail__sumnail-btn">
             </div>
             <input type="text" placeholder="Video name" name="video_name" id="form__video-name">
             <input type="submit" value="Upload video" id="form__submit-btn">
         </form>
         <a href="/upload/take-video" id="main__take-video">Take new video</a>
+        <span id="main__message">{{message}}</span>
    </main>
    {% include "footer.html" %}
    <script src="/script/upload-script.js"></script>

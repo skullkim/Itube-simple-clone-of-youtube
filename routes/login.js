@@ -3,8 +3,9 @@ const passport = require('passport');
 const multer = require('multer');
 const {isLoggedIn, 
         isNotLoggedIn,
-        uploadImage, 
-        uploadVideo} = require('./middlewares');
+        uploadProfileImage, 
+        uploadVideo,
+        uploadSumnail} = require('./middlewares');
 const bcrypt = require('bcrypt');
 const path = require('path');
 const fs = require('fs');
@@ -18,7 +19,7 @@ const router = express.Router();
 
 router.get('/', (req, res, next) => {
     try{
-        res.render('login');
+        return res.render('login', {message: req.flash('message')}) 
     }
     catch(err){
         console.error(err);
@@ -27,14 +28,17 @@ router.get('/', (req, res, next) => {
 });
 //local login
 router.post('/', isNotLoggedIn, (req, res, next) => {
-    passport.authenticate('local', (auth_error, user, info) => {
+    passport.authenticate('local', {
+        failureFlash: true,
+        failureRedirec: '/login',
+    }, (auth_error, user, info) => {
         if(auth_error){
             console.error(auth_error);
             return next(auth_error);
         }
         if(!user){
-            console.log(info.message);
-            return res.redirect(`/?error=${info.message}`);
+            req.flash('message', info.message);
+            return res.redirect('/login');
         }
         return req.login(user, (login_error) => {
             if(login_error){
@@ -67,7 +71,7 @@ router.get('/kakao/callback', passport.authenticate('kakao', {
 //upload
 router.get('/upload', isLoggedIn, (req, res, next) => {
     try{
-        res.render('upload', {is_logged_in: true});
+        res.render('upload', {is_logged_in: true, message: req.flash('message')});
     }
     catch(err){
         console.error(err);
@@ -75,22 +79,38 @@ router.get('/upload', isLoggedIn, (req, res, next) => {
     }
 });
 
-router.post('/upload-video', isLoggedIn, uploadVideo.single('video'), async (req, res, next) => {
+const video_info = uploadVideo.fields([
+    {
+        name: 'video',
+        maxCount: 1
+    },
+    {
+        name: 'sumnail',
+        maxCount: 2
+    }
+]);
+
+router.post('/upload-video', isLoggedIn, video_info, async (req, res, next) => {
     try{
-        if(req.file){
-            const {path} = req.file;
+        console.log(req.files.video);
+        const {video, sumnail} = req.files;
+        if(video){
+            //const {path} = req.file;
             const {id} = req.user;
             const {video_name} = req.body;
             console.log(path);
             await Video.create({
                 video_user: id,
-                video: path, 
-                video_name
+                video: video.path, 
+                video_name,
+                sumnail: sumnail.path,
             });
-            res.redirect('/login/upload?success=Upload success');
+            req.flash('message', 'Upload success');
+            res.redirect('/login/upload');
         }
         else{
-            res.redirect('/login/upload?error=Please choose video before uploading video');
+            req.flash('message', 'Please choose video before uploading video');
+            res.redirect('/login/upload');
         }
     }
     catch(err){
@@ -102,7 +122,7 @@ router.post('/upload-video', isLoggedIn, uploadVideo.single('video'), async (req
 //profile
 router.get('/profile', isLoggedIn, (req, res, next) => {
     try{
-        res.render('profile', {is_logged_in: true});
+        res.render('profile', {is_logged_in: true, message: req.flash('message')});
     }
     catch(err){
         console.error(err);
@@ -149,7 +169,7 @@ router.get('/profile-name', isLoggedIn, (req, res, next) => {
 
 router.get('/profile-adjustment', isLoggedIn, (req, res, next) => {
     try{
-        res.render('edit-profile', {is_logged_in: true});
+        res.render('edit-profile', {is_logged_in: true, message: req.flash('message')});
     }
     catch(err){
         console.error(err);
@@ -157,10 +177,11 @@ router.get('/profile-adjustment', isLoggedIn, (req, res, next) => {
     }
 });
 
-router.post('/user-info-adjustment', isLoggedIn, uploadImage.single('profile_img'), async (req, res, next) => {
+router.post('/user-info-adjustment', isLoggedIn, uploadProfileImage.single('profile_img'), async (req, res, next) => {
     try{
         if(req.user.login_as !== 'local'){
-            res.redirect('/login/profile?error=you can only change profile when you login locally');
+            req.flash('message', 'you can only change profile when you login locally')
+            res.redirect('/login/profile');
         }
         else{
             const {name, email} = req.body;
@@ -189,6 +210,8 @@ router.post('/user-info-adjustment', isLoggedIn, uploadImage.single('profile_img
             }
             if(email){
                 if(!email.includes('@')){
+                    //req.flash('message', 'please input valid email address')
+                    //res.redirect('/login/profile-adjustment');
                     res.redirect('/login/profile-adjustment?error=please input valid email address');
                 }
                 await User.update(
@@ -209,7 +232,7 @@ router.post('/user-info-adjustment', isLoggedIn, uploadImage.single('profile_img
 
 router.get('/passwd-adjustment', isLoggedIn, (req, res, next) => {
     try{
-        res.render('change-password', {is_logged_in: true});
+        res.render('change-password', {is_logged_in: true, message: req.flash('message')});
     }
     catch(err){
         console.error(err);
@@ -221,13 +244,14 @@ router.post('/passwd-verification', isLoggedIn, async (req, res, next) => {
     try{
         const {curr_passwd, passwd1, passwd2} = req.body;
         const {id, password} = req.user;
-        //console.log(curr_passwd, passwd1, passwd2);
-        //const bc_curr_passwd = await bcrypt.hash(curr_passwd, 12);
+       
         if(!await bcrypt.compare(curr_passwd, password)){
-            res.redirect('/login/passwd-adjustment?error=current password is not correct');
+            req.flash('message', 'current password is not correct');
+            res.redirect('/login/passwd-adjustment');
         }
         else if(passwd1 !== passwd2){
-            res.redirect('/login/passwd-adjustment?error=wrong password')
+            req.flash('message', 'wrong password');
+            res.redirect('/login/passwd-adjustment');
         }
         else{
             const new_passwd = await bcrypt.hash(passwd1, 12);
@@ -235,7 +259,8 @@ router.post('/passwd-verification', isLoggedIn, async (req, res, next) => {
                 {password: new_passwd},
                 {where: {id}},
             );
-            res.redirect('/login/passwd-adjustment?success=change password successful');
+            req.flash('message', 'change password successful');
+            res.redirect('/login/passwd-adjustment');
         }
     }
     catch(err){
@@ -245,9 +270,7 @@ router.post('/passwd-verification', isLoggedIn, async (req, res, next) => {
 })
 
 router.get('/logout', isLoggedIn, async(req, res, next) => {
-    //console.log(req.user);
     const {id, log_profile_img, login_as} = req.user;
-    //console.log(id, log_profile_img, login_as);
     if(login_as === 'kakao' || login_as === 'github'){
         await fs.unlink(`.${log_profile_img}`, (err) => {
             if(err){

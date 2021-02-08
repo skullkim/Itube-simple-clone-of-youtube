@@ -15,7 +15,7 @@ exports.isNotLoggedIn = (req, res, next) => {
     }
 }
 
-exports.uploadImage = multer({
+exports.uploadProfileImage = multer({
     storage: multer.diskStorage({
         destination(req, file, done){
             done(null, './upload/profile/local');
@@ -30,11 +30,28 @@ exports.uploadImage = multer({
 exports.uploadVideo = multer({
     storage: multer.diskStorage({
         destination(req, file, done){
-            done(null, './upload/video');
+            if(file.fieldname === 'video'){
+                done(null, './upload/video');
+            }
+            else if(file.fieldname === 'sumnail'){
+                done(null, './upload/sumnail');
+            }
         },
         filename(req, file, done){
             const ext = path.extname(file.originalname);
             done(null, path.basename(file.originalname, ext) + Date.now() + ext);
         },
     }), 
+});
+
+exports.uploadSumnail = multer({
+    storage: multer.diskStorage({
+        destination(req, file, done){
+            done(null, './upload/sumnail');
+        },
+        filename(req, file, done){
+            const ext = path.extname(file.originalname);
+            done(null, path.basename(file.originalname, ext) + Date.now() + ext);
+        }
+    }),
 });

@@ -7,6 +7,7 @@ const session = require('express-session');
 const dotenv = require('dotenv');
 const {sequelize} = require('./models');
 const passport = require('passport');
+const flash = require('express-flash');
 const cors = require('cors');
 const passportConfig = require('./passport');
 const favicon = require('serve-favicon');
@@ -47,13 +48,14 @@ app.use(session({
     name: "session-cookie",
 }));
 //console.log(11111111);
+app.use(flash());
 app.use(passport.initialize());
+app.use(passport.session());
 
 const index_router = require('./routes');
 const login_router = require('./routes/login');
 const signup_router = require('./routes/signup');
 const video_router = require('./routes/display-videos');
-app.use(passport.session());
 
 
 app.use(path.join(__dirname, '/style'), express.static('public'));

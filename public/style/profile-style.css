@@ -36,3 +36,7 @@
     text-decoration: none;
     color: white;
 }
+
+#main__message{
+    color: red;
+}

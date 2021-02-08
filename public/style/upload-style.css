@@ -18,7 +18,7 @@
     margin-bottom: 4vh;
 }
 
-#form__label{
+#video__label, #sumnail__label{
     font-size: 2vh;
 }
 
@@ -37,5 +37,9 @@
     padding: 1vh 0vw;
     text-decoration: none;
     text-align: center;
+}
+
+#main__message{
+    color: red;
 }
 
