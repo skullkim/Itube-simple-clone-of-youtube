@@ -31,6 +31,21 @@ router.get('/sumnail', async(req, res, next) => {
         console.error(err);
         next(err);
     }
+});
+
+router.get('/single-video', (req, res, next) => {
+    try{
+        if(req.isAuthenticated()){
+            res.render('video', {is_logged_in: true});
+        }
+        else{
+            res.render('video', {is_logged_in: false});
+        }
+    }
+    catch(err){
+        console.error(err);
+        next(err);
+    }
 })
 
 module.exports = router;
