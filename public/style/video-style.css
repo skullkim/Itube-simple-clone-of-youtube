@@ -1,0 +1,23 @@
+#main{
+    height: 80vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+}
+
+#main__video{
+    margin-top: 1vh;
+    height: 50vh;
+    width: 60vw;
+}
+
+#main__video-info{
+    margin-top: 2vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    right: 15vw;
+}

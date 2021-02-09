@@ -13,7 +13,7 @@ window.onload = () => {
                 const {id, video_name} = video;
                 console.log(video, video_name);
                 const $div = $(`
-                    <a href="/video/single-video?id=${id}" id="main__video">
+                    <a href="/video/single-video-page?id=${id}" id="main__video">
                         <img src="/video/sumnail?id=${id}" class="video__sumnail">
                         ${video_name}
                     </a>
