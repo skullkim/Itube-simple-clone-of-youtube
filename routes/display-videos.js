@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const Video = require('../models/videos');
 const User = require('../models/users');
+const Comment = require('../models/cooments');
 
 const router = express.Router();
 
@@ -40,7 +41,7 @@ router.get('/single-video-page', (req, res, next) => {
             res.render('video', {is_logged_in: true});
         }
         else{
-            res.render('video', {is_logged_in: false});
+            res.render('video', {is_logged_in: false, message: req.flash('message')});
         }
     }
     catch(err){
@@ -56,6 +57,7 @@ router.get('/info', async (req, res, next) => {
         const video = await Video.findOne({
             where: {id},
         });
+        const videos = await Comment.count({});
         const {video_user, video_name} = video;
         const user = await User.findOne({
             where: {id: video_user}
@@ -64,6 +66,7 @@ router.get('/info', async (req, res, next) => {
         const response = {
             video_name,
             name,
+            videos,
         };
         res.send(JSON.stringify(response));
     }
@@ -82,6 +85,50 @@ router.get('/single-video', async (req, res, next) => {
         });
         //console.log(video);
         res.sendFile(path.join(__dirname, `../${video.video}`))
+    }
+    catch(err){
+        console.error(err);
+        next(err);
+    }
+})
+
+router.get('/comment', async (req, res, next) => {
+    try{
+        // const {video_id} = req.body;
+        const commenter = req.query.commenter;
+        console.log(commenter)
+        const comments = await Comment.findAll({
+            where: {commenter},
+        });
+        //console.log(comments);
+        res.send(JSON.stringify(comments));
+    }
+    catch(err){
+        console.error(err);
+        next(err);
+    }
+})
+
+router.put('/new-comment', async (req, res, next) => {
+    try{
+        //console.log(req.body);
+        if(req.isAuthenticated()){
+            const {comment, video_id} = req.body;
+            await Comment.create({
+                commenter: video_id,
+                comment,
+            });
+            res.end();
+        }
+        else{
+            const err = {
+                error: 'you have to login before adding comment',
+            }
+            res.send(JSON.stringify(err));
+            // req.flash('message', 'you have to login before adding comment');
+            // res.redirect('/video/single-video-page');
+            // //res.render('video', {is_logged_in: false, message: req.flash('message')});
+        }
     }
     catch(err){
         console.error(err);

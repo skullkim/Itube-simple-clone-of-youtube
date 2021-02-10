@@ -1,10 +1,15 @@
-#main{
-    height: 80vh;
-    width: 100vw;
+.flex-box{
     display: flex;
     flex-direction: column;
-    /* justify-content: center; */
+}
+
+#main{
+    /* height: 80vh;
+    width: 100vw; */
+    height: 70%;
+    width: 100%;
     align-items: center;
+    overflow: auto;
 }
 
 #main__video{
@@ -15,9 +20,34 @@
 
 #main__video-info{
     margin-top: 2vh;
-    display: flex;
-    flex-direction: column;
     justify-content: flex-start;
     position: relative;
     right: 15vw;
+}
+
+#main__comments{
+    justify-content: center;
+}
+
+#comments__login-err{
+    color: red;
+}
+
+#comments__add-comment{
+    width: 15vw;
+    border: 2px solid white;
+    border-radius: 4px;
+    box-shadow: 1.5px 1.5px lightgray;
+}
+
+.comments{
+    color: white;
+    background-color: rgb(81, 143, 223);
+    height: 4vh;
+    width: 15vw;
+    text-align: center;
+    margin-top: 2vh;
+    border: 2px solid rgb(81, 143, 223);
+    border-radius: 4px;
+
 }
