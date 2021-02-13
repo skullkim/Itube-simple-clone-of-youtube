@@ -121,6 +121,16 @@ router.post('/upload-video', isLoggedIn, video_info, async (req, res, next) => {
     }
 });
 
+router.get('/take-video', isLoggedIn, (req, res, next) => {
+    try{
+        res.render('record-video', {is_logged_in: true});
+    }
+    catch(err){
+        console.error(err);
+        next(err);
+    }
+})
+
 //profile
 router.get('/profile', isLoggedIn, (req, res, next) => {
     try{

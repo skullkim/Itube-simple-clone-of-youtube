@@ -57,7 +57,9 @@ router.get('/info', async (req, res, next) => {
         const video = await Video.findOne({
             where: {id},
         });
-        const videos = await Comment.count({});
+        const videos = await Comment.count({
+            where: {commenter: id}
+        });
         const {video_user, video_name} = video;
         const user = await User.findOne({
             where: {id: video_user}

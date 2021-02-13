@@ -1,6 +1,4 @@
 
-
-
 $(document).ready(() => {
     function displayError(error){
         const $err = $(`<span id="comments__login-err">${error}</span>`);
