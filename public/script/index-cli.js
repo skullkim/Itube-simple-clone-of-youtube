@@ -11,7 +11,7 @@ window.onload = () => {
             const {data} = res;
             data.forEach(video => {
                 const {id, video_name} = video;
-                console.log(video, video_name);
+                //console.log(video, video_name);
                 const $div = $(`
                     <a href="/video/single-video-page?id=${id}" id="main__video">
                         <img src="/video/sumnail?id=${id}" class="video__sumnail">

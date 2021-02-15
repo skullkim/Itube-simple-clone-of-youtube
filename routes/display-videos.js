@@ -3,6 +3,7 @@ const path = require('path');
 const Video = require('../models/videos');
 const User = require('../models/users');
 const Comment = require('../models/cooments');
+const Op = require('sequelize').Op;
 
 const router = express.Router();
 
@@ -131,6 +132,35 @@ router.put('/new-comment', async (req, res, next) => {
             // res.redirect('/video/single-video-page');
             // //res.render('video', {is_logged_in: false, message: req.flash('message')});
         }
+    }
+    catch(err){
+        console.error(err);
+        next(err);
+    }
+});
+
+router.get('/search', (req, res, next) => {
+    try{
+        req.isAuthenticated() ? res.render('search-result', {is_logged_in: true}) : res.render('search-result', {is_logged_in: false});
+    }
+    catch(err){
+        console.error(err);
+        next(err);
+    }
+});
+
+router.get('/search-result', async (req, res, next) => {
+    try{
+        const search = req.query.search;
+        console.log(search);
+        const result = await Video.findAll({
+            where: {
+                video_name: {
+                    [Op.like]: `%${search}%`
+                },
+            },
+        });
+        res.send(JSON.stringify(result));
     }
     catch(err){
         console.error(err);
