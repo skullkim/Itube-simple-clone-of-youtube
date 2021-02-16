@@ -11,6 +11,8 @@ const flash = require('express-flash');
 const cors = require('cors');
 const passportConfig = require('./passport');
 const favicon = require('serve-favicon');
+const helmet = require('helmet');
+const hpp = require('hpp');
 
 
 dotenv.config();
@@ -27,6 +29,16 @@ sequelize.sync({force: false})
     .then(() => console.log('success to connect DB'))
     .catch((err) => console.error(err));
 
+if(process.env.NODE_ENV === 'production'){
+    app.enable('trust proxy');
+    app.use(morgan('combined'));
+    app.use(helmet({contentSecurityPolicy: false}));
+    app.use(hpp());
+}
+else{
+    app.use(morgan('dev'));
+}
+
 app.use(morgan('dev'));
 app.use(cors({origin:`http://localhost:${app.get('port')}`}));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -38,7 +50,7 @@ const {time} = require('console');
 app.use(session({
     resave: false,
     saveUninitialized: false,
-    // proxy: true,
+    proxy: true,
     secret: process.env.COOKIE_SECRET,
     cookie: {
         httpOnly: true,
