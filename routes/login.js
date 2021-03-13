@@ -3,6 +3,7 @@ const passport = require('passport');
 const multer = require('multer');
 const {isLoggedIn, 
         isNotLoggedIn,
+        AwsConfig,
         uploadProfileImage, 
         uploadVideo,
         uploadSumnail} = require('./middlewares');
@@ -14,6 +15,7 @@ const Token = require('../models/token');
 const Video = require('../models/videos');
 const axios = require('axios');
 const { log } = require('util');
+const AWS = require('aws-sdk');
 
 const router = express.Router();
 
@@ -142,14 +144,32 @@ router.get('/profile', isLoggedIn, (req, res, next) => {
     }
 });
 
-router.get('/profile-img', isLoggedIn, (req, res, next) => {
+router.get('/profile-img', isLoggedIn, async (req, res, next) => {
     try{
         const user = req.user;
         if(user.login_as === 'local' && user.log_profile_img === null){
             res.sendFile(path.join(__dirname, '../public/default-profile.png'));
         }
         else{
-            res.sendFile(path.join(__dirname, `../${user.log_profile_img}`));
+            //console.log(111111 + user.log_profile_img);
+            const {log_profile_img, profile_key} = user;
+            console.log(11111+ profile_key);
+            const s3 = new AWS.S3();
+            console.log('get object');
+            s3.getObject({
+                Bucket: 'itube-storagy',
+                Key: `${profile_key}`,
+            }, (err, data) => {
+                if(err){
+                    console.error(err);
+                }
+                else{
+                    console.log(data);
+                    //res.writeHead(100, {'Content-Type': 'image/jpeg'});
+                    res.write(data.Body, 'binary');
+                    res.end(null, 'binary');
+                }
+            })
         }
     }
     catch(err){
@@ -198,20 +218,25 @@ router.post('/user-info-adjustment', isLoggedIn, uploadProfileImage.single('prof
         else{
             const {name, email} = req.body;
             console.log(name, email);
-            const {id, log_profile_img} = req.user;
+            const {id, log_profile_img, profile_key} = req.user;
             if(req.file){
-                const {path} = req.file;
-                console.log(path, '   id', id);
+                //const {path} = req.file;
+                const {location, key} = req.file;
+                console.log("location", location);
+                //console.log(path, '   id', id);
                 await User.update(
-                    {log_profile_img: `/${path}`},
+                    {
+                        log_profile_img: `${location}`,
+                        profile_key: `${key}`,
+                    },
                     {where: {id}}
                 )
-                fs.unlink(`.${log_profile_img}`, (err) => {
-                    if(err){
-                        console.error(err);
-                        next(err);
-                    }
-                    console.log('local profile image deleted');
+                const s3 = new AWS.S3();
+                s3.deleteObject({
+                    Bucket: 'itube-storagy',
+                    Key: `${profile_key}`,
+                }, (err, data) => {
+                    err ? console.error(err) : console.log('local profile image deleted');
                 })
             }
             if(name){

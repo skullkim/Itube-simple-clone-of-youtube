@@ -28,12 +28,15 @@ module.exports = class User extends Sequelize.Model{
                 type: Sequelize.STRING(50),
             },
             log_profile_img:{
-                type:Sequelize.STRING(100),
+                type:Sequelize.STRING(1000),
                 defaultValue: null,
             },
             login_as:{
                 type: Sequelize.STRING(20),
-            }
+            },
+            profile_key:{
+                type: Sequelize.STRING(1000),
+            },
         },{
             sequelize,
             timestamps: false,

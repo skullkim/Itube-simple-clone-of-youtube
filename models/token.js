@@ -5,6 +5,7 @@ module.exports = class Token extends Sequelize.Model{
         return super.init({
             user_id:{
                 type: Sequelize.STRING(100),
+                tyep: Sequelize.INTEGER,
                 allowNull: false,
             },
             kakao_auth:{
