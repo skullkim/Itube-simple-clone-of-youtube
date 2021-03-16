@@ -5,6 +5,9 @@ const Token = require('../models/token');
 const { response } = require('express');
 const axios = require('axios');
 const fs = require('fs');
+const AWS = require('aws-sdk');
+const s3Stream = require('s3-streams');
+
 require('dotenv').config();
 module.exports = () => passport.use(new githubStrategy({
         clientID: "1f6fbd0c8fe0805c2d32",
@@ -20,12 +23,17 @@ module.exports = () => passport.use(new githubStrategy({
             //find profile image in API server
             const img_path = profile.photos[0].value;
             const profile_img = `github-profile-${Date.now()}.jpg`
+            const key = `upload/profile/github/github-profile-${Date.now()}.jpg`
             axios.get(img_path, {
                 responseType: 'stream',
             })
                 .then((response) => {
                     //save profile image
-                    response.data.pipe(fs.createWriteStream(`./upload/profile/github/${profile_img}`));
+                    const s3 = new AWS.S3();
+                    response.data.pipe(s3Stream.WriteStream(s3, {
+                        Bucket: `${process.env.AWS_S3_BUCKET}`,
+                        Key: key,
+                    }));
                 })
                 .catch(err => {
                     console.error(err);
@@ -37,7 +45,8 @@ module.exports = () => passport.use(new githubStrategy({
                     {
                         login_as: 'github', 
                         github_name: profile.username,
-                        log_profile_img: `/upload/profile/github/${profile_img}`
+                        log_profile_img: `/upload/profile/github/${profile_img}`,
+                        profile_key: `${key}`,
                     },
                     {where: {github_name: profile.username}}
                 );
@@ -64,6 +73,7 @@ module.exports = () => passport.use(new githubStrategy({
                     github_name: profile.username,
                     log_profile_img: `'/upload/profile/github/${profile_img}`,
                     login_as: 'github',
+                    profile_key: `${key}`,
                 });
                 //save token
                 await Token.create({
