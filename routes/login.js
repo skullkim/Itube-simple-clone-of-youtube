@@ -16,8 +16,11 @@ const Video = require('../models/videos');
 const axios = require('axios');
 const { log } = require('util');
 const AWS = require('aws-sdk');
+const dotenv = require('dotenv');
 
 const router = express.Router();
+
+dotenv.config();
 
 router.get('/', (req, res, next) => {
     try{
@@ -147,29 +150,27 @@ router.get('/profile', isLoggedIn, (req, res, next) => {
 router.get('/profile-img', isLoggedIn, async (req, res, next) => {
     try{
         const user = req.user;
-        if(user.login_as === 'local' && user.log_profile_img === null){
+        const {login_as, log_profile_img, profile_key} = user;
+        if(login_as === 'local' && log_profile_img === null){
             res.sendFile(path.join(__dirname, '../public/default-profile.png'));
         }
         else{
-            //console.log(111111 + user.log_profile_img);
-            const {log_profile_img, profile_key} = user;
-            console.log(11111+ profile_key);
-            const s3 = new AWS.S3();
-            console.log('get object');
-            s3.getObject({
-                Bucket: 'itube-storagy',
-                Key: `${profile_key}`,
-            }, (err, data) => {
-                if(err){
-                    console.error(err);
-                }
-                else{
-                    console.log(data);
-                    //res.writeHead(100, {'Content-Type': 'image/jpeg'});
-                    res.write(data.Body, 'binary');
-                    res.end(null, 'binary');
-                }
-            })
+
+                console.log(11111+ profile_key);
+                const s3 = new AWS.S3();
+                console.log('get object');
+                s3.getObject({
+                    Bucket: process.env.AWS_S3_BUCKET,
+                    Key: `${profile_key}`,
+                }, (err, data) => {
+                    if(err){
+                        console.error(err);
+                    }
+                    else{
+                        res.write(data.Body, 'binary');
+                        res.end(null, 'binary');
+                    }
+                });
         }
     }
     catch(err){
@@ -181,7 +182,7 @@ router.get('/profile-img', isLoggedIn, async (req, res, next) => {
 router.get('/profile-name', isLoggedIn, (req, res, next) => {
     try{
         const user = req.user;
-        const response = {name: null};
+        const response = {name: null, login_as: null};
         if(user.login_as === 'local'){
             response.name = user.name;
         }
@@ -191,6 +192,7 @@ router.get('/profile-name', isLoggedIn, (req, res, next) => {
         else if(user.login_as === 'github'){
             response.name = user.github_name
         }
+        response.login_as = user.login_as;
         res.send(JSON.stringify(response));
     }
     catch(err){
@@ -307,15 +309,22 @@ router.post('/passwd-verification', isLoggedIn, async (req, res, next) => {
 })
 
 router.get('/logout', isLoggedIn, async(req, res, next) => {
-    const {id, log_profile_img, login_as} = req.user;
+    const {id, log_profile_img, login_as, profile_key} = req.user;
     if(login_as === 'kakao' || login_as === 'github'){
-        await fs.unlink(`.${log_profile_img}`, (err) => {
-            if(err){
-                console.error(err);
-                next(err);
-            }
-            console.log('deleted');
+        const s3 = new AWS.S3();
+        s3.deleteObject({
+            Bucket: `${process.env.AWS_S3_BUCKET}`,
+            Key: `${profile_key}`,
+        }, (err, data) => {
+            err ? console.error(err) : console.log(`${login_as} profile image deleted`);
         })
+        // await fs.unlink(`.${log_profile_img}`, (err) => {
+        //     if(err){
+        //         console.error(err);
+        //         next(err);
+        //     }
+        //     console.log('deleted');
+        // })
     }
     const token = await Token.findOne({
         where: {user_id: id}
