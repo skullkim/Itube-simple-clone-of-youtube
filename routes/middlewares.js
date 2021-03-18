@@ -28,7 +28,7 @@ exports.AwsConfig = AWS.config.update({
 exports.uploadProfileImage = multer({
     storage: multerS3({
         s3: new AWS.S3(),
-        bucket: 'itube-storagy',
+        bucket: `${process.env.AWS_S3_BUCKET}`,
         key(req, file, done){
             const ext = path.extname(file.originalname);
             done(null, `upload/profile/local/${path.basename(file.originalname, ext) + Date.now() + ext}`);
@@ -37,17 +37,24 @@ exports.uploadProfileImage = multer({
 });
 
 exports.uploadVideo = multer({
-    s3: new AWS.S3(),
-    bucket: 'itube-storagy',
-    key(req, file, done){
-        const ext = path.extname(file.originalname);
-        if(file.fieldname === 'video'){
-            done(null, `./upload/video/${path.basename(file.originalname, ext) + Date.now() + ext}`);
+    storage: multerS3({
+        s3: new AWS.S3(),
+        bucket: `${process.env.AWS_S3_BUCKET}`,
+        contentType: multerS3.AUTO_CONTENT_TYPE,
+        acl: 'public-read',
+        metadata: function(req, file, cb){
+            cb(null, {fieldName: file.fieldname});
+        },
+        key(req, file, done){
+            const ext = path.extname(file.originalname);
+            console.log(file);
+            const s3_path = file.fieldname === 'video' ?
+                `upload/video/${path.basename(file.originalname, ext) + Date.now() + ext}` :
+                `upload/sumnail/${path.basename(file.originalname, ext) + Date.now() + ext}`;
+            done(null, s3_path);
         }
-        else if(file.fieldname == 'sumnail'){
-            done(null, `./upload/sumnail/${path.basename(file.originalname, ext) + Date.now() + ext}`);
-        }
-    } 
+    }),
+
 });
 
 // exports.uploadProfileImage = multer({

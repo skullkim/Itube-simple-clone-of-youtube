@@ -84,22 +84,14 @@ router.get('/upload', isLoggedIn, (req, res, next) => {
     }
 });
 
-const video_info = uploadVideo.fields([
-    {
-        name: 'video',
-        maxCount: 1
-    },
-    {
-        name: 'sumnail',
-        maxCount: 2
-    }
-]);
+const video_info = uploadVideo.fields([{name: 'video', maxCount: 1}, {name: 'sumnail', maxCount: 2}]);
 
 router.post('/upload-video', isLoggedIn, video_info, async (req, res, next) => {
     try{
         //console.log('video', req.files);
-        const {video, sumnail} = req.files;
-        console.log('video', video[0].path)
+         const {video, sumnail} = req.files;
+         console.log('video', req.files);
+         //res.end();
         if(video){
             //const {path} = req.file;
             console.log(video);
@@ -108,9 +100,9 @@ router.post('/upload-video', isLoggedIn, video_info, async (req, res, next) => {
             console.log(path);
             await Video.create({
                 video_user: id,
-                video: video[0].path, 
+                video: video[0].key,
                 video_name,
-                sumnail: sumnail[0].path,
+                sumnail: sumnail[0].key,
             });
             req.flash('message', 'Upload success');
             res.redirect('/login/upload');
@@ -317,14 +309,7 @@ router.get('/logout', isLoggedIn, async(req, res, next) => {
             Key: `${profile_key}`,
         }, (err, data) => {
             err ? console.error(err) : console.log(`${login_as} profile image deleted`);
-        })
-        // await fs.unlink(`.${log_profile_img}`, (err) => {
-        //     if(err){
-        //         console.error(err);
-        //         next(err);
-        //     }
-        //     console.log('deleted');
-        // })
+        });
     }
     const token = await Token.findOne({
         where: {user_id: id}
