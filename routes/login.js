@@ -90,14 +90,14 @@ router.post('/upload-video', isLoggedIn, video_info, async (req, res, next) => {
     try{
         //console.log('video', req.files);
          const {video, sumnail} = req.files;
-         console.log('video', req.files);
+         //console.log('video', req.files);
          //res.end();
         if(video){
             //const {path} = req.file;
             console.log(video);
             const {id} = req.user;
             const {video_name} = req.body;
-            console.log(path);
+            console.log(video[0].key);
             await Video.create({
                 video_user: id,
                 video: video[0].key,
@@ -152,7 +152,7 @@ router.get('/profile-img', isLoggedIn, async (req, res, next) => {
                 const s3 = new AWS.S3();
                 console.log('get object');
                 s3.getObject({
-                    Bucket: process.env.AWS_S3_BUCKET,
+                    Bucket: `${process.env.AWS_S3_BUCKET}`,
                     Key: `${profile_key}`,
                 }, (err, data) => {
                     if(err){

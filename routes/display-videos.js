@@ -4,6 +4,8 @@ const Video = require('../models/videos');
 const User = require('../models/users');
 const Comment = require('../models/cooments');
 const Op = require('sequelize').Op;
+const{AwsConfig} = require('./middlewares');
+const AWS = require('aws-sdk');
 
 const router = express.Router();
 
@@ -24,11 +26,27 @@ router.get('/sumnail', async(req, res, next) => {
     try{
         const id = req.query.id;
         //console.log(req.query.id);
-        const video = await Video.findOne({
+        const _video = await Video.findOne({
             where: {id}
-        })
-        const {sumnail} = video;
-        res.sendFile(path.join(__dirname, `../${sumnail}`));
+        });
+        const {sumnail} = _video;
+        console.log(_video);
+        const s3 = new AWS.S3();
+        s3.getObject({
+            Bucket: `${process.env.AWS_S3_BUCKET}`,
+            Key: `${sumnail}`,
+        }, (err, data) => {
+            console.log("video", sumnail);
+            if(err){
+                console.error(err);
+            }
+            else{
+                res.write(data.Body, 'binary');
+                res.end(null, 'binary');
+            }
+        });
+        // const {sumnail} = video;
+        // res.sendFile(path.join(__dirname, `../${sumnail}`));
     }
     catch(err){
         console.error(err);
@@ -83,11 +101,25 @@ router.get('/single-video', async (req, res, next) => {
     try{
         const id = req.query.id;
         //console.log(id);
-        const video = await Video.findOne({
+        const _video = await Video.findOne({
             where: {id},
         });
+        const {video} = _video;
+        const s3 = new AWS.S3();
+        s3.getObject({
+            Bucket: `${process.env.AWS_S3_BUCKET}`,
+            Key: `${video}`,
+        }, (err, data) => {
+            if(err){
+                console.error(err);
+            }
+            else{
+                res.write(data.Body, 'binary');
+                res.end(null, 'binary');
+            }
+        });
         //console.log(video);
-        res.sendFile(path.join(__dirname, `../${video.video}`))
+        //res.sendFile(path.join(__dirname, `../${video.video}`))
     }
     catch(err){
         console.error(err);
